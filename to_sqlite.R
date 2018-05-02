@@ -4,7 +4,8 @@ library(readxl)
 library(RSQLite)
 
 xlsx = "SQL_Data_Set_01_April_10_18.xlsx"
-names = excel_sheets(xlsx)
+sheet_names = tolower(excel_sheets(xlsx))
+sheet_names[c(2, 4)] = c("company_name", "company_info")
 
 args = commandArgs(trailingOnly = TRUE)
 DB = args[1]
@@ -30,7 +31,7 @@ for (i in 2:4) {
     sheet = sheet[-c(9, 10, 11)]
 
   message(paste0(names(sheet), sep = ", "))
-  dbWriteTable(db, tolower(names[[i]]), sheet)
+  dbWriteTable(db, sheet_names[[i]], sheet)
 }
 
 # Mon Apr 30 13:06:49 PDT 2018
@@ -39,15 +40,15 @@ daily = read.csv("all_stocks_5yr.csv", stringsAsFactors = FALSE)
 
 # Never mind, SQLite won't handle dates.
 #daily$date = strptime(daily$date, "%Y-%m-%d")
-dbWriteTable(db, name = "daily", daily)
+dbWriteTable(db, name = "daily_share_prices", daily)
 
 sic = read.csv("sic-codes.csv")
 dbWriteTable(db, name = "sic", sic)
 
 fortune500 = read.csv("Fortune500Locations.csv")
-dbWriteTable(db, name = "fortune500", fortune500)
+dbWriteTable(db, name = "company_locations", fortune500)
 
 state = read.csv("statePopulations.csv")
-dbWriteTable(db, name = "state", state)
+dbWriteTable(db, name = "state_populations", state)
 
 dbDisconnect(db)
