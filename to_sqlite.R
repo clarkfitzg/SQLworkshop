@@ -44,4 +44,10 @@ dbWriteTable(db, name = "daily", daily)
 sic = read.csv("sic-codes.csv")
 dbWriteTable(db, name = "sic", sic)
 
+fortune500 = read.csv("Fortune500Locations.csv")
+dbWriteTable(db, name = "fortune500", fortune500)
+
+state = read.csv("statePopulations.csv")
+dbWriteTable(db, name = "state", state)
+
 dbDisconnect(db)

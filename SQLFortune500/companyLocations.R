@@ -9,7 +9,7 @@ doc = htmlParse(tt)
 t1 = readHTMLTable(doc, which = 1, stringsAsFactors = FALSE)
 
 names(t1) = gsub(" ", "_", tolower(names(t1)))
-names(t1)[c(5, 6)] = c("street", "city")
+names(t1)[c(1, 2, 5, 6)] = c("rank2015", "rank2014", "street", "city")
 
 
 write.csv(t1, "Fortune500Locations.csv", row.names = FALSE)
