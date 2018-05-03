@@ -21,6 +21,8 @@
 
 \maketitle
 
+\section{Selecting and Sorting}
+
 \begin{questions}
 
 \question How many tables are in the database?
@@ -30,7 +32,7 @@
 \end{solution}
 
 
-\question Select all fields in the `company` table.
+\question Select all fields in the `company' table.
 
 \begin{solution}
 \begin{lstlisting}
@@ -112,6 +114,17 @@ FROM daily_share_prices
 \end{solution}
 
 
+\question How many different days do we have daily share prices for?
+
+\begin{solution}
+\begin{lstlisting}
+SELECT COUNT(DISTINCT date)
+FROM daily_share_prices
+;
+\end{lstlisting}
+\end{solution}
+
+
 \question Which 5 states have the highest population in 2017? lowest?
 
 \begin{solution}
@@ -159,6 +172,47 @@ FROM daily_share_prices
 \end{solution}
 
 
+\question Which states (in this database) have companies in them?
+
+\begin{solution}
+\begin{lstlisting}
+SELECT DISTINCT state
+FROM company_locations
+;
+\end{lstlisting}
+\end{solution}
+
+
+\question How many companies are in each of the different tables? What can
+you conclude?
+
+\begin{solution}
+\begin{lstlisting}
+SELECT COUNT(DISTINCT ticker)
+FROM company_info  -- Similar for others
+;
+\end{lstlisting}
+company\_info: 450, company\_locations: 500, company\_name: 505,
+daily\_share\_prices: 505. Different numbers mean that not all companies
+are in all of the tables.
+\end{solution}
+
+
 \end{questions}
+\newpage
+\section{Filtering and Calculations}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{questions}
+
+
+\question Which years do we have daily share prices for?
+
+\begin{solution}
+    Nick's here
+\end{solution}
+
+
+\end{questions}
+
 
 \end{document}
