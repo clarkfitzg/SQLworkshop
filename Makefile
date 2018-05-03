@@ -12,3 +12,6 @@ statePopulations.csv: SQLFortune500/statePopulations.R
 
 %.pdf: %.tex
 	pdflatex $<
+
+clean:
+	rm $(DB)

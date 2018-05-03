@@ -14,11 +14,12 @@ db = dbConnect(SQLite(), DB)
 
 
 for (i in 2:4) {
+
   sheet = read_xlsx(xlsx, i)
 
   # Standardize the column names.
   names = gsub("\\s", "_", tolower(names(sheet)))
-  names = gsub("__", "_", tolower(names(sheet)), fixed = TRUE)
+  names = gsub("__", "_", names, fixed = TRUE)
   names = gsub("^_|_$", "", names)
 
   key = match("key", names)
