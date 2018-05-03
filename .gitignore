@@ -1,4 +1,11 @@
 stocks.sqlite
+Fortune500Locations.csv
+statePopulations.csv
+
+# LaTeX
+*.aux
+*.log
+*.pdf
 
 # History files
 .Rhistory

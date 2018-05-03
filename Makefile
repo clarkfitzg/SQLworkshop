@@ -8,3 +8,6 @@ Fortune500Locations.csv: SQLFortune500/companyLocations.R
 
 statePopulations.csv: SQLFortune500/statePopulations.R
 	Rscript $<
+
+%.pdf: %.tex
+	pdflatex $<
