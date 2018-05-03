@@ -178,10 +178,8 @@ FROM daily_share_prices
 \begin{lstlisting}
 SELECT DISTINCT state
 FROM company_locations
-;
 \end{lstlisting}
 \end{solution}
-
 
 \question How many companies are in each of the different tables? What can
 you conclude?
@@ -197,22 +195,213 @@ daily\_share\_prices: 505. Different numbers mean that not all companies
 are in all of the tables.
 \end{solution}
 
-
 \end{questions}
+
+
+% Part 2 ------------------------------------------------------------
 \newpage
 \section{Filtering and Calculations}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{questions}
 
 
-\question Which years do we have daily share prices for?
+\question Which company is located in Oregon?
 
 \begin{solution}
-    Nick's here
+\begin{lstlisting}
+SELECT *
+FROM company_locations
+WHERE state = 'Oregon'
+;
+\end{lstlisting}
 \end{solution}
 
 
+\question Which companies have a price-earnings ratio below 7.0?
+
+\begin{solution}
+\begin{lstlisting}
+SELECT ticker, share_price
+FROM financial_ratios
+WHERE price_earnings_ratio < 7
+;
+\end{lstlisting}
+\end{solution}
+
+
+\question Which companies have an asset turnover ($\textrm{revenue} /
+\textrm{assets}$) greater than 5.0?
+
+\begin{solution}
+\begin{lstlisting}
+SELECT ticker, (revenue / asset) AS asset_turnover
+FROM company_info
+WHERE asset_turnover > 2
+;
+\end{lstlisting}
+\end{solution}
+
+
+\question Which states had a 2010 population of at least 10,000,000?
+
+\begin{solution}
+\begin{lstlisting}
+SELECT *
+FROM state_populations
+WHERE popn2010 >= 10000000
+;
+\end{lstlisting}
+\end{solution}
+
+
+\question How many days did Apple's (AAPL) share price close above 150?
+
+\begin{solution}
+\begin{lstlisting}
+SELECT COUNT(*)
+FROM daily_share_prices
+WHERE ticker == 'AAPL'
+AND close > 150
+;
+\end{lstlisting}
+\end{solution}
+
+
+\question Which New York companies are not located in New York city?
+
+\begin{solution}
+\begin{lstlisting}
+SELECT *
+FROM company_locations
+WHERE state = 'New York'
+AND city != 'New York'
+;
+\end{lstlisting}
+\end{solution}
+
+
+\question Which California companies are located in Irvine, San Jose, or
+Thousand Oaks?
+
+\begin{solution}
+\begin{lstlisting}
+SELECT *
+FROM company_locations
+WHERE state = 'California'
+AND city IN ('Irvine', 'San Jose', 'Thousand Oaks')
+;
+\end{lstlisting}
+\end{solution}
+
+
+\question Which companies have assets of more than \$1,000,000 or are in the
+software industry?
+
+\begin{solution}
+\begin{lstlisting}
+SELECT *
+FROM company_info
+WHERE asset > 1000000000000
+OR industry = 'Software'
+;
+\end{lstlisting}
+\end{solution}
+
+
+\question Which division has SIC codes that mention the word ``tree''?
+
+\begin{solution}
+\begin{lstlisting}
+SELECT division, description
+FROM sic
+WHERE description LIKE '%tree %' -- The space is important!
+;
+\end{lstlisting}
+\end{solution}
+
+
+\question Which companies have web pages that do not end in ``.com''? It's okay
+if your query includes 1-5 false positives.
+
+\begin{solution}
+\begin{lstlisting}
+SELECT *
+FROM company_info
+WHERE TRIM(web_page, '/.') NOT LIKE '%.com'
+;
+\end{lstlisting}
+\end{solution}
+
+
+\question Which companies are classified as construction (SIC codes 1500 --
+1799)?
+
+\begin{solution}
+\begin{lstlisting}
+SELECT *
+FROM company_info
+WHERE sic_code BETWEEN 1500 AND 1799
+;
+\end{lstlisting}
+\end{solution}
+
+
+\question Which companies are in Silicon Valley, which is approximately bounded
+by the box (-122.996, 38.092) to (-121.479, 37.039)?
+
+\begin{solution}
+\begin{lstlisting}
+SELECT *
+FROM company_locations
+WHERE xcoord BETWEEN -122.996 AND -121.479
+AND ycoord BETWEEN 37.039 AND 38.092
+;
 \end{questions}
+\end{document}
 
 
+\question Are any rows in the daily share prices table missing the opening or
+closing price?
+
+\begin{solution}
+\begin{lstlisting}
+SELECT *
+FROM daily_share_prices
+WHERE open IS NULL
+OR close IS NULL
+;
+\end{lstlisting}
+\end{solution}
+
+
+\question Are any states missing population estimates?
+
+\begin{solution}
+\begin{lstlisting}
+SELECT *
+FROM state_populations
+WHERE popn2010 IS NULL
+OR popnestimate2017 IS NULL
+;
+\end{lstlisting}
+\end{solution}
+
+
+\question How many California cities have a company whose address is on a
+``street'' or ``road''?
+
+\begin{solution}
+\begin{lstlisting}
+SELECT DISTINCT city
+FROM company_locations
+WHERE state = 'California'
+AND (
+-- Be careful: some streets might not end with '.'
+	street LIKE '%st.'
+	OR street LIKE '%rd.'
+)
+;
+\end{lstlisting}
+\end{solution}
+
+\end{questions}
 \end{document}
