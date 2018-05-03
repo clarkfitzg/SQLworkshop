@@ -16,11 +16,18 @@
 \begin{document}
  
 \title{SQL Workshop Day 1}
+\author{UC Davis DSI}
 \date{May 4, 2018}
 
 \maketitle
 
 \begin{questions}
+
+\question How many tables are in the database?
+
+\begin{solution}
+    7. Look under `Database Structure' tab.
+\end{solution}
 
 
 \question Select all fields in the `company` table.
@@ -34,26 +41,41 @@ FROM company
 \end{solution}
 
 
+\question Which table has the most rows? The fewest rows?
+
+\begin{solution}
+
+    Count rows using:
+
+\begin{lstlisting}
+SELECT COUNT(*)
+FROM daily_share_prices  -- replace with name of each table
+;
+\end{lstlisting}
+\end{solution}
+
+
 \question Write a query so that the fields in \texttt{financial\_ratios} table
 appear in alphabetical order.
 
 \begin{solution}
 \begin{lstlisting}
 SELECT beta
-	, dividend_yield
-	, market_cap_in_millions
-	, price_earnings_ratio
-	, price_to_book_ratio
-	, return_on_equity
-	, share_price
-	, ticker
+    , dividend_yield
+    , market_cap_in_millions
+    , price_earnings_ratio
+    , price_to_book_ratio
+    , return_on_equity
+    , share_price
+    , ticker
 FROM financial_ratios
 ;
 \end{lstlisting}
 \end{solution}
 
 
-\question Which company has the least expensive stock?
+    \question Which company has the least expensive stock in the
+    \texttt{financial\_ratios} table?
 
 \begin{solution}
 \begin{lstlisting}
@@ -65,8 +87,8 @@ LIMIT 1
 \end{lstlisting}
 \end{solution}
 
-
-\question Which company has the most expensive stock?
+    \question Which company has the most expensive stock in the
+    \texttt{financial\_ratios} table?
 
 \begin{solution}
 \begin{lstlisting}
@@ -77,7 +99,6 @@ LIMIT 1
 ;
 \end{lstlisting}
 \end{solution}
-
 
 
 \end{questions}
