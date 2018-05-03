@@ -1,7 +1,8 @@
 DB = stocks.sqlite
 
-$(DB): to_sqlite.R Fortune500Locations.csv statePopulations.csv
+$(DB): to_sqlite.R matchTickerLocationCompanyNames.R Fortune500Locations.csv statePopulations.csv
 	Rscript $< $@
+	Rscript matchTickerLocationCompanyNames.R $@
 
 Fortune500Locations.csv: SQLFortune500/companyLocations.R
 	Rscript $<
