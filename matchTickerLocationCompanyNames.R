@@ -1,5 +1,10 @@
+
 library(RSQLite)
-con = dbConnect(SQLite(), "stocks.sqlite")
+
+args = commandArgs(trailingOnly = TRUE)
+DB = args[1]
+
+con = dbConnect(SQLite(), DB)
 
 pos = dbReadTable(con, "company_locations")
 sp = dbReadTable(con, "company_name")
@@ -19,3 +24,12 @@ tmp$ticker = ""
 tmp$ticker[i] = z$ticker
 
 tmp = tmp[tmp$ticker != "",]
+
+# Drop the old locations table.
+dbSendQuery(con, "DROP TABLE company_locations")
+
+# Write the new locations table.
+dbWriteTable(con, name = "company_locations", tmp)
+
+dbDisconnect(con)
+
