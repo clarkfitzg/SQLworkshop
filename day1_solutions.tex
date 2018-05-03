@@ -101,6 +101,64 @@ LIMIT 1
 \end{solution}
 
 
+\question How many different stocks do we have daily share prices for?
+
+\begin{solution}
+\begin{lstlisting}
+SELECT COUNT(DISTINCT ticker)
+FROM daily_share_prices
+;
+\end{lstlisting}
+\end{solution}
+
+
+\question Which 5 states have the highest population in 2017? lowest?
+
+\begin{solution}
+\begin{lstlisting}
+SELECT *
+FROM state_populations
+ORDER BY popnEstimate2017  -- DESC for lowest
+LIMIT 5
+;
+\end{lstlisting}
+\end{solution}
+
+
+\question How many different 4 digit industry sector codes are possible?
+
+\begin{solution}
+\begin{lstlisting}
+SELECT COUNT(DISTINCT sic)
+FROM sic
+;
+\end{lstlisting}
+\end{solution}
+
+
+\question How many different industry sectors appear in the company
+information?
+
+\begin{solution}
+\begin{lstlisting}
+SELECT COUNT(DISTINCT sic_code)
+FROM company_info
+;
+\end{lstlisting}
+\end{solution}
+
+
+\question What are all the different prices that each company closed at?
+
+\begin{solution}
+\begin{lstlisting}
+SELECT DISTINCT ticker, close
+FROM daily_share_prices
+;
+\end{lstlisting}
+\end{solution}
+
+
 \end{questions}
 
 \end{document}
