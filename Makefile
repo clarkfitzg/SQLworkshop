@@ -15,5 +15,8 @@ statePopulations.csv: SQLFortune500/statePopulations.R
 	latexmk -pdf $<
 	latexmk -c $<
 
+%.pdf: %.md
+	pandoc -s $< -o $@ -V geometry:margin=1in -V fontsize=12pt
+
 clean:
 	rm $(DB)
