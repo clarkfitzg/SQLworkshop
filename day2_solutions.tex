@@ -23,7 +23,71 @@
 
 \section{Combining Data}
 
+From Wikipedia:
+
+    \begin{quote}
+        The Standard Industrial Classification (SIC) is a system for
+        classifying industries by a four-digit code. Established in the
+        United States in 1937, it is used by government agencies to
+        classify industry areas.
+    \end{quote}
+
 \begin{questions}
+
+\question How many different SIC codes appear in the \texttt{company\_info}
+table?
+
+\begin{solution}
+\begin{lstlisting}
+SELECT COUNT(DISTINCT(sic_code))
+FROM company_info
+;
+\end{lstlisting}
+\end{solution}
+
+    \question Which SIC codes appear in \texttt{company\_name} but have no
+    description in the \texttt{sic} table?
+
+\begin{solution}
+\begin{lstlisting}
+SELECT DISTINCT(sic_code)
+FROM company_info
+EXCEPT
+SELECT SIC
+FROM sic
+;
+\end{lstlisting}
+\end{solution}
+
+
+\question Select the ticker, company name, and SIC code with corresponding description for
+    companies that have SIC codes.
+
+\begin{solution}
+\begin{lstlisting}
+SELECT ticker, company_name, sic_code, Description
+FROM company_info
+JOIN sic
+ON company_info.sic_code = sic.SIC
+;
+\end{lstlisting}
+\end{solution}
+
+\question Select the ticker, company name, and SIC code with corresponding
+    description (possibly NULL) for
+    all companies in the \texttt{company\_info} table. 
+
+\begin{solution}
+\begin{lstlisting}
+SELECT ticker, company_name, sic_code, Description
+FROM company_info
+LEFT JOIN sic
+ON company_info.sic_code = sic.SIC
+;
+\end{lstlisting}
+\end{solution}
+
+
 
     \question Which ticker symbols appear in both
     \texttt{company\_locations} and \texttt{daily\_share\_prices}?
@@ -44,6 +108,7 @@ FROM daily_share_prices
 
 \begin{solution}
 \begin{lstlisting}
+.
 \end{lstlisting}
 \end{solution}
 

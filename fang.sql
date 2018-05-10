@@ -13,7 +13,8 @@ WHERE ticker IN (SELECT ticker FROM fang_info)
 ;
 
 CREATE TABLE fang_sic AS
-SELECT * FROM sic
+SELECT *
+FROM sic
 WHERE SIC IN (SELECT sic_code FROM fang_info)
 OR SIC IN (5182, 3292)
 ;
