@@ -12,7 +12,8 @@ statePopulations.csv: SQLFortune500/statePopulations.R
 	Rscript $<
 
 %.pdf: %.tex
-	pdflatex $<
+	latexmk -pdf $<
+	latexmk -c $<
 
 clean:
 	rm $(DB)
