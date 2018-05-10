@@ -21,6 +21,260 @@
 
 \maketitle
 
+\section{Review}
+
+\begin{questions}
+
+\question Which tickers have a beta of 3 or more?
+
+\begin{solution}
+\begin{lstlisting}
+SELECT *
+FROM financial_ratios
+WHERE beta >= 3
+;
+\end{lstlisting}
+\end{solution}
+
+
+\question How many days in 2014-2015 did Amazon (AMZN) shares close above 350?
+
+\begin{solution}
+\begin{lstlisting}
+SELECT COUNT(*)
+FROM daily_share_prices
+WHERE
+	ticker = 'AMZN'
+	AND date BETWEEN '2014-01-01' AND '2015-01-01'
+	AND close > 350
+;
+\end{lstlisting}
+\end{solution}
+
+
+\question Are any values missing from the state populations table?
+
+\begin{solution}
+\begin{lstlisting}
+SELECT *
+FROM state_populations
+WHERE
+	popnEstimate2017 IS NULL
+	OR popn2010 IS NULL
+;
+\end{lstlisting}
+\end{solution}
+
+
+\end{questions}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\clearpage
+
+\section{Aggregation}
+
+\begin{questions}
+
+%%%%% Aggregate Functions %%%%%
+\subsection*{Aggregation Functions}
+
+\question What's the total assets of all companies in the company info table?
+
+\begin{solution}
+\begin{lstlisting}
+SELECT SUM(asset)
+FROM company_info
+;
+\end{lstlisting}
+\end{solution}
+
+
+\question How many companies are in the "Energy" sector?
+
+\begin{solution}
+\begin{lstlisting}
+SELECT COUNT(*)
+FROM company_info
+WHERE sector = 'Energy'
+;
+\end{lstlisting}
+\end{solution}
+
+
+\question Which ticker has the most assets? Which has the least? Answer this
+question without using \lstinline{ORDER BY}.
+
+\begin{solution}
+\begin{lstlisting}
+-- Min assets
+SELECT ticker, min(asset)
+FROM company_info
+;
+
+-- Max assets
+SELECT ticker, max(asset)
+FROM company_info
+;
+\end{lstlisting}
+\end{solution}
+
+
+\question What happens if you aggregate two different columns in the same
+query? Give an example and explain the result. What happens if you also include
+columns that aren't aggregated?
+
+\begin{solution}
+Consider the query
+\begin{lstlisting}
+SELECT ticker, min(asset), max(asset)
+FROM company_info
+;
+\end{lstlisting}
+The result of this query is
+\begin{lstlisting}
+ticker  min(asset)  max(asset)
+FNMA    74100.0     3287968000000.0
+\end{lstlisting}
+The company FNMA has the most assets and FTI has the least. The query returns
+the correct min and max values for the asset column, but only the ticker FNMA.
+
+By trying several different queries, it looks like rows for columns that aren't
+aggregated are selected based on the last aggregation in the query. In the
+example query, that's \lstinline{max(asset)}, so FNMA is selected rather than
+FTI.
+\end{solution}
+
+
+
+%%%%% GROUP BY %%%%%
+\subsection*{Grouping}
+
+\question How many Fortune 500 companies are in each state?
+
+\begin{solution}
+\begin{lstlisting}
+SELECT state, COUNT(*) AS num_companies
+FROM company_locations
+GROUP BY state
+ORDER BY num_companies DESC
+;
+\end{lstlisting}
+\end{solution}
+
+
+\question According to the company locations table, how many companies went
+down in Fortune 500 rankings from 2014 to 2015? How many went up? Try to get
+all of this information in one query.
+
+\begin{solution}
+\begin{lstlisting}
+SELECT trend, COUNT(*)
+FROM company_locations
+GROUP BY trend
+;
+\end{lstlisting}
+\end{solution}
+
+
+\question What is the average opening price for each stock in the daily share
+prices table? Sort the result from lowest to highest average price.
+
+\begin{solution}
+\begin{lstlisting}
+SELECT ticker, AVG(open) AS avg_price
+FROM daily_share_prices
+GROUP BY ticker
+ORDER BY avg_price
+;
+\end{lstlisting}
+\end{solution}
+
+
+\question Which companies in the daily share prices table had the 3 highest
+average closing prices for 2014? Hint: use \lstinline{STRFTIME('%Y', date)} to
+extract the year.
+
+\begin{solution}
+\begin{lstlisting}
+SELECT ticker, AVG(close) AS avg_close
+FROM daily_share_prices
+WHERE STRFTIME('%Y', date) = '2014'
+GROUP BY ticker
+ORDER BY avg_close DESC
+;
+\end{lstlisting}
+\end{solution}
+
+
+
+%%%%% HAVING %%%%%
+\subsection*{Filter Rows After Aggregation}
+
+\question Which states have between 5 and 10 companies?
+
+\begin{solution}
+\begin{lstlisting}
+SELECT state, COUNT(*) AS freq
+FROM company_locations
+GROUP BY state
+HAVING freq BETWEEN 5 AND 10
+ORDER BY freq
+;
+\end{lstlisting}
+\end{solution}
+
+
+\question How many stocks have negative average daily increase ($\textrm{close}
+- \textrm{close})$) over the 5-year period?
+
+\begin{solution}
+\begin{lstlisting}
+SELECT AVG(close - open) AS avg_increase
+FROM daily_share_prices
+GROUP BY ticker
+HAVING avg_increase < 0
+;
+\end{lstlisting}
+\end{solution}
+
+
+\question Which year and month combinations (e.g., April 2017, June 2016) have
+less than 8000 share prices? Hint: use \lstinline{STRFTIME('%Y-%m', date)} to
+extract the year and month.
+
+\begin{solution}
+\begin{lstlisting}
+SELECT
+	STRFTIME('%Y-%m', date) AS year_month,
+	COUNT(*) AS freq
+FROM daily_share_prices
+GROUP BY year_month
+HAVING freq < 8000
+;
+\end{lstlisting}
+\end{solution}
+
+
+\question Which industries have a negative average earning per share?
+
+\begin{solution}
+\begin{lstlisting}
+SELECT sector, AVG(earning_per_share) AS avg_earning
+FROM company_info
+GROUP BY industry
+ORDER BY avg_earning
+;
+\end{lstlisting}
+\end{solution}
+
+
+
+\end{questions}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\clearpage
+
 \section{Combining Data}
 
 From Wikipedia:
@@ -60,6 +314,9 @@ FROM sic
 \end{solution}
 
 
+
+\subsection*{Single Joins}
+
 \question Select the ticker, company name, and SIC code with corresponding description for
     companies that have SIC codes.
 
@@ -72,6 +329,7 @@ ON company_info.sic_code = sic.SIC
 ;
 \end{lstlisting}
 \end{solution}
+
 
 \question Select the ticker, company name, and SIC code with corresponding
     description (possibly NULL) for
@@ -102,19 +360,7 @@ ORDER BY cnt DESC
 \end{solution}
 
 
-\question Which states have the most companies in the
-    \texttt{company\_info} table?
-
-\begin{solution}
-\begin{lstlisting}
-SELECT state, COUNT(*) as cnt
-FROM company_locations
-GROUP BY state
-ORDER BY cnt DESC
-;
-\end{lstlisting}
-\end{solution}
-
+\subsection*{Multiple Joins}
 
 \question Write a query that produces a table with columns for state, SIC
 code, SIC description, and count of companies located in that state
@@ -168,8 +414,6 @@ ORDER BY l.state ASC, cnt DESC
 %;
 %\end{lstlisting}
 %\end{solution}
-
-
 
 \end{questions}
 \end{document}
