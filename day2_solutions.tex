@@ -67,7 +67,7 @@ FROM sic
 \begin{lstlisting}
 SELECT ticker, company_name, sic_code, Description
 FROM company_info
-JOIN sic
+INNER JOIN sic
 ON company_info.sic_code = sic.SIC
 ;
 \end{lstlisting}
@@ -87,30 +87,87 @@ ON company_info.sic_code = sic.SIC
 \end{lstlisting}
 \end{solution}
 
-
-
-    \question Which ticker symbols appear in both
-    \texttt{company\_locations} and \texttt{daily\_share\_prices}?
+\question Which 4 digit SIC codes have the most companies?
 
 \begin{solution}
 \begin{lstlisting}
-SELECT ticker
-FROM company_locations
-INTERSECT
-SELECT ticker
-FROM daily_share_prices
+SELECT sic_code, Description, count(*) as cnt
+FROM company_info
+LEFT JOIN sic
+ON company_info . sic_code = sic . SIC
+GROUP BY sic_code
+ORDER BY cnt DESC
 ;
 \end{lstlisting}
 \end{solution}
 
 
-\question Which states have the most companies?
+\question Which states have the most companies in the
+    \texttt{company\_info} table?
 
 \begin{solution}
 \begin{lstlisting}
-.
+SELECT state, COUNT(*) as cnt
+FROM company_locations
+GROUP BY state
+ORDER BY cnt DESC
+;
 \end{lstlisting}
 \end{solution}
+
+
+\question Write a query that produces a table with columns for state, SIC
+code, SIC description, and count of companies located in that state
+with that SIC code.
+
+\begin{solution}
+\begin{lstlisting}
+SELECT l.state,  i.sic_code, s.Description, count(*) as cnt
+FROM company_info as i
+LEFT JOIN sic as s
+ON i.sic_code = s.SIC
+INNER JOIN company_locations as l
+ON l.ticker = i.ticker
+GROUP BY i.sic_code
+ORDER BY l.state ASC, cnt DESC
+;
+\end{lstlisting}
+\end{solution}
+
+
+\question Modify the query above to only return rows with a count
+of three or more companies.
+
+\begin{solution}
+\begin{lstlisting}
+SELECT l.state,  i.sic_code, s.Description, count(*) as cnt
+FROM company_info as i
+LEFT JOIN sic as s
+ON i.sic_code = s.SIC
+INNER JOIN company_locations as l
+ON l.ticker = i.ticker
+GROUP BY i.sic_code
+HAVING cnt >= 3
+ORDER BY l.state ASC, cnt DESC
+;
+\end{lstlisting}
+\end{solution}
+
+
+
+%    \question Which ticker symbols appear in both
+%    \texttt{company\_locations} and \texttt{daily\_share\_prices}?
+%
+%\begin{solution}
+%\begin{lstlisting}
+%SELECT ticker
+%FROM company_locations
+%INTERSECT
+%SELECT ticker
+%FROM daily_share_prices
+%;
+%\end{lstlisting}
+%\end{solution}
 
 
 
