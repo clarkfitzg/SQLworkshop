@@ -1,0 +1,53 @@
+% From https://www.sharelatex.com/learn/Typing_exams_in_LaTeX
+% 
+% To produce pdf run:
+%   $ pdflatex paper.tex 
+%
+
+\documentclass[10pt]{exam}
+
+\usepackage{listings}
+\lstset{basicstyle=\footnotesize\ttfamily,breaklines=true}
+ 
+% These do what you would expect:
+\printanswers
+%\noprintanswers
+
+\begin{document}
+ 
+\title{SQL Workshop Week 2}
+\author{UC Davis DSI}
+\date{May 11, 2018}
+
+\maketitle
+
+\section{Combining Data}
+
+\begin{questions}
+
+    \question Which ticker symbols appear in both
+    \texttt{company\_locations} and \texttt{daily\_share\_prices}?
+
+\begin{solution}
+\begin{lstlisting}
+SELECT ticker
+FROM company_locations
+INTERSECT
+SELECT ticker
+FROM daily_share_prices
+;
+\end{lstlisting}
+\end{solution}
+
+
+\question Which states have the most companies?
+
+\begin{solution}
+\begin{lstlisting}
+\end{lstlisting}
+\end{solution}
+
+
+
+\end{questions}
+\end{document}
