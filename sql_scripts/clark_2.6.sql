@@ -6,5 +6,5 @@ LEFT JOIN sic AS s
 ON i.sic_code = s.SIC
 INNER JOIN company_locations AS l
 ON l.ticker = i.ticker
-GROUP BY i.sic_code
+GROUP BY i.sic_code, l.state
 ORDER BY l.state ASC, cnt DESC
