@@ -13,6 +13,14 @@ WHERE ticker IN ("FB", "AMZN", "NFLX", "GOOGL", "AAPL")
    AND date IN ("2018-02-05", "2018-02-06", "2018-02-07")
 ;
 
+--CREATE TABLE fang_prices AS
+--SELECT ticker, date, high
+--FROM daily_share_prices
+--WHERE ticker IN (SELECT ticker FROM fang_info)
+--ORDER BY date DESC
+--LIMIT 10
+--;
+
 CREATE TABLE fang_locations AS
 SELECT ticker, city, state, zip 
 FROM company_locations
@@ -20,8 +28,9 @@ WHERE ticker IN (SELECT ticker FROM fang_info)
 ;
 
 CREATE TABLE fang_sic AS
-SELECT *
+SELECT SIC, Description
 FROM sic
 WHERE SIC IN (SELECT sic_code FROM fang_info)
       OR SIC IN (5182, 3292)
 ;
+

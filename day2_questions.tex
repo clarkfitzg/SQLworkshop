@@ -10,8 +10,8 @@
 \lstset{basicstyle=\footnotesize\ttfamily,breaklines=true}
  
 % These do what you would expect:
-\printanswers
-%\noprintanswers
+%\printanswers
+\noprintanswers
 
 \begin{document}
  
@@ -311,13 +311,6 @@ SELECT SIC
 FROM sic
 ;
 \end{lstlisting}
-
-We can also use a subquery
-\begin{lstlisting}
-SELECT DISTINCT(sic_code)
-FROM company_info
-WHERE NOT sic_code IN (SELECT SIC FROM sic);
-\end{lstlisting}
 \end{solution}
 
 
@@ -367,75 +360,12 @@ ORDER BY cnt DESC
 \end{solution}
 
 
-\subsection*{Sub-Queries}
-
-\question
-Focusing only on 2014 and the daily_share_prices table,
-find the names of the companies which had any closing price that exceed the average closing price of AAPL in 2014.
-
-
-\begin{solution}
-This is a two-step operation.
-We need to first compute the average closing price for Apple stock
-for 2014.
-We do this code we have already practiced:
-\begin{lstlisting}
-SELECT AVG(close) FROM daily_share_prices
-WHERE ticker = 'AAPL' AND date BETWEEN '2014-01-01' AND '2014-12-31';
-\end{lstlisting}
-
-We could read the average price we get and use it to
-filter rows in a new query by typing it directly.
-But that is not ideal. Instead, we'll compute this
-result and use it directly in our larger query.
-
-\begin{lstlisting}
-SELECT ticker FROM daily_share_prices
-WHERE
-   date BETWEEN '2014-01-01' AND '2014-12-31'
- AND
-   close > (SELECT AVG(close) FROM daily_share_prices
-             WHERE ticker = 'AAPL' AND date BETWEEN '2014-01-01' AND '2014-12-31');
-\end{lstlisting}
-This gives back many rows, the first of which are AAPL.
-What we have is a row for each day that a close price exceeded the average.
-We want just the names of the companies, so not the same name repeated
-as many times as that ticker exceeded the AAPL average.
-We do this by adding DISTINCT to our query to make the rows unique:
-\begin{lstlisting}
-SELECT DISTINCT ticker FROM daily_share_prices
-WHERE
-   date BETWEEN '2014-01-01' AND '2014-12-31'
- AND
-   close > (SELECT AVG(close) FROM daily_share_prices
-             WHERE ticker = 'AAPL' AND date BETWEEN '2014-01-01' AND '2014-12-31');
-\end{lstlisting}
-\end{solution}
-
-Bonus Question  Count the number of days these stocks had a close price above this average.
-
-\begin{solution}
-For this, we use a GROUP BY and a call to COUNT() to get the result we want,
-discarding the DISTINCT we added above for a different purpose:
-\begin{lstlisting}  
-SELECT ticker, COUNT(ticker) FROM daily_share_prices
-WHERE
-   date BETWEEN '2014-01-01' AND '2014-12-31'
- AND
-   close > (SELECT AVG(close) FROM daily_share_prices
-             WHERE ticker = 'AAPL' AND date BETWEEN '2014-01-01' AND '2014-12-31')
-GROUP BY ticker;
-\end{lstlisting}
-\end{solution}
-
-
 \subsection*{Multiple Joins}
 
 \question Write a query that produces a table with columns for state, SIC
 code, SIC description, and count of companies located in that state
 with that SIC code.
 
-% 
 \begin{solution}
 \begin{lstlisting}
 SELECT l.state,  i.sic_code, s.Description, count(*) as cnt
@@ -444,43 +374,10 @@ LEFT JOIN sic as s
 ON i.sic_code = s.SIC
 INNER JOIN company_locations as l
 ON l.ticker = i.ticker
-GROUP BY i.sic_code, l.state
+GROUP BY i.sic_code
 ORDER BY l.state ASC, cnt DESC
 ;
 \end{lstlisting}
-
-
-We'll break this into 2 steps.
-We want the state and ticker and SIC ode all in one table
-for each company. If a compay doesn't have a SIC code, we want to drop.
-So this an INNER JOIN.
-\begin{lstlisting}
-SELECT l.ticker, l.state, r.sic_code
-FROM company_locations AS l
-INNER JOIN company_info AS r
-ON l.ticker = r.ticker;
-\end{lstlisting}
-
-Having done this, we can do the next step.
-This merges the description of the SIC code 
-
-Now with this, we want to count by
-
-
-SELECT state, sic_code, COUNT(ticker) AS cnt, B.description
-FROM 
-   (SELECT l.ticker, l.state, r.sic_code
-        FROM company_locations AS l
-        INNER JOIN company_info AS r
-        ON l.ticker = r.ticker )
-      AS A
-LEFT JOIN sic as B
-ON A.sic_code = B.SIC
-GROUP BY state, sic_code
-ORDER BY state ASC, cnt DESC;
-
-
-
 \end{solution}
 
 
@@ -504,28 +401,19 @@ ORDER BY l.state ASC, cnt DESC
 
 
 
-    \question Which ticker symbols appear in both
-    \texttt{company\_locations} and \texttt{daily\_share\_prices}?
-
-\begin{solution}
- We can use a subquery again.
-\begin{lstlisting}
-SELECT ticker
-FROM company_locations
-WHERE ticker IN (SELECT ticker FROM daily_share_prices);
-\end{lstlisting}
-
-Alternatively, like EXCEPT, we can use INTERSECT
-\begin{lstlisting}
-SELECT ticker
-FROM company_locations
-INTERSECT
-SELECT ticker
-FROM daily_share_prices
-;
-\end{lstlisting}
-\end{solution}
-
+%    \question Which ticker symbols appear in both
+%    \texttt{company\_locations} and \texttt{daily\_share\_prices}?
+%
+%\begin{solution}
+%\begin{lstlisting}
+%SELECT ticker
+%FROM company_locations
+%INTERSECT
+%SELECT ticker
+%FROM daily_share_prices
+%;
+%\end{lstlisting}
+%\end{solution}
 
 \end{questions}
 \end{document}

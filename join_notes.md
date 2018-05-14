@@ -1,3 +1,5 @@
+# Joins
+
 Joining tables together is at the heart of SQL and databases. It allows us
 to make connections between different tables and ask richer questions.
 Powerful databases will happily join 10+ different tables together
