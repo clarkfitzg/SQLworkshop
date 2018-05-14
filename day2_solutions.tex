@@ -370,7 +370,7 @@ ORDER BY cnt DESC
 \subsection*{Sub-Queries}
 
 \question
-Focusing only on 2014 and the daily_share_prices table,
+Focusing only on 2014 and the \texttt{daily\_share\_prices} table,
 find the names of the companies which had any closing price that exceed the average closing price of AAPL in 2014.
 
 
@@ -467,6 +467,7 @@ This merges the description of the SIC code
 Now with this, we want to count by
 
 
+\begin{lstlisting}
 SELECT state, sic_code, COUNT(ticker) AS cnt, B.description
 FROM 
    (SELECT l.ticker, l.state, r.sic_code
@@ -478,6 +479,7 @@ LEFT JOIN sic as B
 ON A.sic_code = B.SIC
 GROUP BY state, sic_code
 ORDER BY state ASC, cnt DESC;
+\end{lstlisting}
 
 
 
@@ -495,7 +497,7 @@ LEFT JOIN sic as s
 ON i.sic_code = s.SIC
 INNER JOIN company_locations as l
 ON l.ticker = i.ticker
-GROUP BY i.sic_code
+GROUP BY i.sic_code, l.state
 HAVING cnt >= 3
 ORDER BY l.state ASC, cnt DESC
 ;
