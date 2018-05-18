@@ -1,0 +1,190 @@
+% From https://www.sharelatex.com/learn/Typing_exams_in_LaTeX
+% 
+% To produce pdf run:
+%   $ pdflatex paper.tex 
+%
+
+\documentclass[10pt]{exam}
+
+\usepackage{listings}
+\lstset{basicstyle=\footnotesize\ttfamily,breaklines=true}
+ 
+% These do what you would expect:
+\printanswers
+%\noprintanswers
+
+\begin{document}
+ 
+\title{SQL Workshop Week 3}
+\author{UC Davis DSI}
+\date{May 18, 2018}
+
+\maketitle
+
+\section{Review}
+
+\begin{questions}
+
+\question What are the most valuable sectors?
+
+\begin{solution}
+\begin{lstlisting}
+SELECT
+\end{lstlisting}
+\end{solution}
+
+\end{questions}
+\section{Joins}
+
+From Wikipedia:
+
+    \begin{quote}
+        The Standard Industrial Classification (SIC) is a system for
+        classifying industries by a four-digit code. Established in the
+        United States in 1937, it is used by government agencies to
+        classify industry areas.
+    \end{quote}
+
+\begin{questions}
+
+\subsection*{Single Joins}
+
+\question Select the ticker, company name, and SIC code with corresponding description for
+    companies that have SIC codes.
+
+\begin{solution}
+\begin{lstlisting}
+SELECT ticker, company_name, sic_code, Description
+FROM company_info
+INNER JOIN sic
+    ON company_info.sic_code = sic.SIC
+;
+\end{lstlisting}
+\end{solution}
+
+
+\question Select the ticker, company name, and SIC code with corresponding
+    description (possibly NULL) for
+    all companies in the \texttt{company\_info} table. 
+
+\begin{solution}
+\begin{lstlisting}
+SELECT ticker, company_name, sic_code, Description
+FROM company_info
+LEFT JOIN sic
+    ON company_info.sic_code = sic.SIC
+;
+\end{lstlisting}
+\end{solution}
+
+\question Which 4 digit SIC codes have the most companies?
+
+\begin{solution}
+\begin{lstlisting}
+SELECT sic_code, Description, count(*) as cnt
+FROM company_info
+LEFT JOIN sic
+    ON company_info . sic_code = sic . SIC
+GROUP BY sic_code
+ORDER BY cnt DESC
+;
+\end{lstlisting}
+\end{solution}
+
+\question Modify the query above to only return SIC codes with at least
+5 companies.
+
+\begin{solution}
+\begin{lstlisting}
+SELECT sic_code, Description, count(*) as cnt
+FROM company_info
+LEFT JOIN sic
+    ON company_info . sic_code = sic . SIC
+GROUP BY sic_code
+HAVING cnt >= 5
+ORDER BY cnt DESC
+;
+\end{lstlisting}
+\end{solution}
+
+
+
+\subsection*{Multiple Joins}
+
+\question Use inner joins to produce a table with columns for company name,
+state, SIC code, and SIC description.
+
+\begin{solution}
+\begin{lstlisting}
+SELECT n.sandp_company_name, l.state,  i.sic_code, s.Description
+FROM company_info as i
+INNER JOIN company_name as n
+    ON n.ticker = i.ticker
+INNER JOIN sic as s
+    ON i.sic_code = s.SIC
+INNER JOIN company_locations as l
+    ON l.ticker = i.ticker
+;
+\end{lstlisting}
+
+Or you may prefer this syntax:
+
+\begin{lstlisting}
+SELECT n.sandp_company_name, l.state,  i.sic_code, s.Description
+FROM company_info as i
+    , company_name as n
+    , sic as s 
+    , company_locations as l 
+WHERE n.ticker = i.ticker
+AND i.sic_code = s.SIC
+AND l.ticker = i.ticker
+;
+\end{lstlisting}
+\end{solution}
+
+
+\question Modify the above query to 
+produce a table with columns for state, SIC
+code, SIC description, and count of companies located in that state
+with that SIC code.
+
+\begin{solution}
+
+    We no longer need company name, so we can remove the join to that
+    table. Then we add a \texttt{GROUP BY} clause.
+
+\begin{lstlisting}
+SELECT l.state,  i.sic_code, s.Description, count(*) as cnt
+FROM company_info as i
+INNER JOIN sic as s
+    ON i.sic_code = s.SIC
+INNER JOIN company_locations as l
+    ON l.ticker = i.ticker
+GROUP BY i.sic_code, l.state
+ORDER BY l.state ASC, cnt DESC
+;
+\end{lstlisting}
+\end{solution}
+
+
+\question Modify the query above to only return rows with a count
+of at least 2 companies.
+
+\begin{solution}
+\begin{lstlisting}
+SELECT l.state,  i.sic_code, s.Description, count(*) as cnt
+FROM company_info as i
+INNER JOIN sic as s
+    ON i.sic_code = s.SIC
+INNER JOIN company_locations as l
+    ON l.ticker = i.ticker
+GROUP BY i.sic_code, l.state
+HAVING cnt >= 2
+ORDER BY l.state ASC, cnt DESC
+;
+\end{lstlisting}
+\end{solution}
+
+
+\end{questions}
+\end{document}
