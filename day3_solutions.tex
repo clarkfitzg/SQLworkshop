@@ -23,14 +23,74 @@
 
 \section{Review}
 
+    These questions are meant to be more open ended. Challenge yourself by
+    answering each one in two different ways. This requires three types of
+    knowledge: knowledge of the data / domain (finance), knowledge of the
+    tool (SQL), and critical thinking. This is the next step beyond following
+    instructions.
+
 \begin{questions}
+
+\question What are the most profitable companies?
+
+\begin{solution}
+
+    1. We can compute standard metrics that don't exist in the database such as return on assets (ROA).
+\texttt{DISTINCT} addresses a data quality issue by removing the duplicated
+    rows.
+
+\begin{lstlisting}
+SELECT DISTINCT company_name, net_income / asset as return_on_assets
+FROM company_info
+ORDER BY  return_on_assets DESC
+;
+\end{lstlisting}
+
+2.
+Return on equity directly measures profitability for investors.
+
+\begin{lstlisting}
+SELECT cn.sandp_company_name, fr.return_on_equity
+FROM company_name as cn
+JOIN financial_ratios as fr
+ON cn.ticker = fr.ticker
+ORDER BY fr.return_on_equity DESC
+;
+\end{lstlisting}
+
+\end{solution}
+
 
 \question What are the most valuable sectors?
 
 \begin{solution}
+    This is a question about sectors, so you should be thinking about
+    aggregating figures up to the sector level, which means using \texttt{GROUP
+    BY sector}. Use \texttt{ORDER BY} so that the most valuable show up on
+    top.
+
+1.    Showing the assets in each sector in trillions of dollars rather than single units lets us
+    readily read and compare them.
+
 \begin{lstlisting}
-SELECT
+SELECT sector, SUM(asset) / 1e12 as trillions
+FROM company_info
+GROUP BY sector
+ORDER BY trillions DESC
+;
 \end{lstlisting}
+
+2. This computes the average earnings per share in each industry
+
+\begin{lstlisting}
+SELECT sector, AVG(earning_per_share) as avg_earning_per_share
+FROM company_info
+GROUP BY sector
+ORDER BY  avg_earning_per_share DESC
+;
+\end{lstlisting}
+
+
 \end{solution}
 
 \end{questions}
