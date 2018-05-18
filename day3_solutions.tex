@@ -53,7 +53,7 @@ Return on equity directly measures profitability for investors.
 \begin{lstlisting}
 SELECT cn.sandp_company_name, fr.return_on_equity
 FROM company_name as cn
-JOIN financial_ratios as fr
+    INNER JOIN financial_ratios as fr
 ON cn.ticker = fr.ticker
 ORDER BY fr.return_on_equity DESC
 ;
@@ -310,7 +310,7 @@ This query finds two more banks. So we can use all the companies listed under
 SIC code 6021 and 6022 as banks.
 
 An even more careful strategy is to search for SIC codes that mention banks in
-the the sic table.
+the sic table.
 
 Now we can get relevant share prices. First we select the tickers for banks:
 \begin{lstlisting}
@@ -332,9 +332,19 @@ WHERE ticker IN (
 AND date BETWEEN '2016-06-16' AND '2016-07-23'
 ;
 \end{lstlisting}
-We could've used join to find these instead of a subquery. The join is more
-complicated to write, but has the advantage that we could also include
+We could've used \texttt{JOIN} to find these instead of a subquery. This
+has the advantage that we could also include
 information that isn't in the daily share prices table (such as company names).
+Here's what the join looks like:
+\begin{lstlisting}
+SELECT date, dsp.ticker, open, close
+FROM company_info
+JOIN daily_share_prices as dsp
+    ON company_info.ticker = dsp.ticker
+WHERE sic_code IN (6021, 6022)
+AND date BETWEEN '2016-06-16' AND '2016-07-23'
+;
+\end{lstlisting}
 
 Now we can save the share prices from our query to a comma-seperated values
 (CSV) file using the menus in the database browser. Google Sheets and Microsoft
