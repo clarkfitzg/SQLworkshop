@@ -202,6 +202,7 @@ FROM daily_share_prices
 WHERE STRFTIME('%Y', date) = '2014'
 GROUP BY ticker
 ORDER BY avg_close DESC
+LIMIT 3
 ;
 \end{lstlisting}
 \end{solution}
@@ -225,12 +226,12 @@ ORDER BY freq
 \end{solution}
 
 
-\question How many stocks have negative average daily increase ($\textrm{close}
-- \textrm{close})$) over the 5-year period?
+\question Which stocks have negative average daily increase ($\textrm{close}
+- \textrm{open})$) over the 5-year period?
 
 \begin{solution}
 \begin{lstlisting}
-SELECT AVG(close - open) AS avg_increase
+SELECT ticker, AVG(close - open) AS avg_increase
 FROM daily_share_prices
 GROUP BY ticker
 HAVING avg_increase < 0
@@ -263,6 +264,7 @@ HAVING freq < 8000
 SELECT sector, AVG(earning_per_share) AS avg_earning
 FROM company_info
 GROUP BY industry
+HAVING avg_earning <= 0
 ORDER BY avg_earning
 ;
 \end{lstlisting}
